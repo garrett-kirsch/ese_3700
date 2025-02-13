@@ -1,0 +1,23 @@
+*** SPICE deck for cell hw3_6b_test{sch} from library ese3700
+*** Created on Wed Feb 12, 2025 15:06:37
+*** Last revised on Wed Feb 12, 2025 15:07:37
+*** Written on Wed Feb 12, 2025 15:07:56 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+* Model cards are described in this file:
+.include C:/Users/garre/ese_3700/22nm_HP.pm
+
+*** SUBCIRCUIT ese3700__hw3_6b FROM CELL hw3_6b{sch}
+.SUBCKT ese3700__hw3_6b IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 vdd IN OUT gnd N L=0.022U W=0.022U
+Mpmos@0 OUT IN gnd vdd P L=0.022U W=0.022U
+.ENDS ese3700__hw3_6b
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: hw3_6b_test{sch}
+VV_Generi@0 net@0 gnd DC 0.8 AC 0
+Xhw3_6b@0 net@0 hw3_6b@0_OUT ese3700__hw3_6b
+.END

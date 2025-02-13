@@ -1,0 +1,15 @@
+*** SPICE deck for cell hw3_2a_nmos{sch} from library ese3700
+*** Created on Wed Feb 12, 2025 08:57:45
+*** Last revised on Wed Feb 12, 2025 09:34:09
+*** Written on Wed Feb 12, 2025 09:36:18 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+* Model cards are described in this file:
+.include C:/Users/garre/ese_3700/22nm_HP.pm
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: hw3_2a_nmos{sch}
+Mnmos@0 vdd vdd gnd gnd N L=0.022U W=0.022U
+VVdd vdd gnd DC 0.8 AC 0
+.END
