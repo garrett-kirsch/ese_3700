@@ -1,0 +1,87 @@
+*** SPICE deck for cell test_shift{sch} from library hw6
+*** Created on Sat Apr 12, 2025 23:00:17
+*** Last revised on Sat Apr 12, 2025 23:20:05
+*** Written on Sat Apr 12, 2025 23:20:14 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+* Model cards are described in this file:
+.include C:/Users/garre/ese_3700/22nm_HP.pm
+
+*** SUBCIRCUIT hw6__nand2 FROM CELL nand2{sch}
+.SUBCKT hw6__nand2 A B OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT A net@1 gnd N L=0.022U W=0.022U
+Mnmos@1 net@1 B gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd A OUT vdd P L=0.022U W=0.022U
+Mpmos@1 vdd B OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__nand2
+
+*** SUBCIRCUIT hw6__not FROM CELL not{sch}
+.SUBCKT hw6__not IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT IN gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd IN OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__not
+
+*** SUBCIRCUIT hw6__latch FROM CELL latch{sch}
+.SUBCKT hw6__latch CLK IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Xnand2@0 IN CLK net@7 hw6__nand2
+Xnand2@1 net@0 OUT net@5 hw6__nand2
+Xnand2@2 net@7 net@5 OUT hw6__nand2
+Xnot@0 CLK net@0 hw6__not
+.ENDS hw6__latch
+
+*** SUBCIRCUIT hw6__register FROM CELL register{sch}
+.SUBCKT hw6__register _CLK CLK IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Xlatch@0 _CLK IN net@0 hw6__latch
+Xlatch@1 CLK net@0 OUT hw6__latch
+.ENDS hw6__register
+
+*** SUBCIRCUIT hw6__buffer FROM CELL buffer{sch}
+.SUBCKT hw6__buffer IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@1 net@26 IN gnd gnd N L=0.022U W=0.022U
+Mnmos@2 OUT net@26 gnd gnd N L=0.022U W=0.022U
+Mpmos@1 vdd IN net@26 vdd P L=0.022U W=0.022U
+Mpmos@2 vdd net@26 OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__buffer
+
+*** SUBCIRCUIT hw6__nor2 FROM CELL nor2{sch}
+.SUBCKT hw6__nor2 A B OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT A gnd gnd N L=0.022U W=0.022U
+Mnmos@1 OUT B gnd gnd N L=0.022U W=0.022U
+Mpmos@0 net@2 B OUT vdd P L=0.022U W=0.022U
+Mpmos@1 vdd A net@2 vdd P L=0.022U W=0.022U
+.ENDS hw6__nor2
+
+*** SUBCIRCUIT hw6__two_phase_clock_generator FROM CELL two_phase_clock_generator{sch}
+.SUBCKT hw6__two_phase_clock_generator _CLK CLK IN
+** GLOBAL gnd
+** GLOBAL vdd
+Xbuffer@0 IN b hw6__buffer
+Xnor2@0 a _CLK CLK hw6__nor2
+Xnor2@1 CLK b _CLK hw6__nor2
+Xnot@0 IN a hw6__not
+.ENDS hw6__two_phase_clock_generator
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: test_shift{sch}
+VVPWL@0 IN gnd pwl ( 0 0 750ps 0 751ps 0 1250ps 0 1251ps 0 1750ps 0 1751ps 0.8 2250ps 0.8 2251ps 0 2750ps 0 2751ps 0 3250ps 0 3251ps 0 3750ps 0 3751ps 0 4250ps 0 4251ps 0 4750ps 0 4751ps 0.8 5250ps 0.8 5251ps 0 5750ps 0 5751ps 0.8 6250ps 0.8 6251ps 0  ) DC 0V AC 0V 0
+VVPulse@0 net@38 gnd pulse (0 0.8V 0ns 1ps 1ps 500ps 1ns) DC 0V AC 0V 0
+VV_Generi@0 vdd gnd DC 0.8 AC 0
+Xregister@0 net@12 CLK IN net@26 hw6__register
+Xregister@1 net@12 CLK net@26 net@28 hw6__register
+Xregister@2 net@12 CLK net@28 net@30 hw6__register
+Xregister@3 net@12 CLK net@30 OUT hw6__register
+Xtwo_phas@0 net@12 CLK net@38 hw6__two_phase_clock_generator
+.END

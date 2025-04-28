@@ -1,0 +1,46 @@
+*** SPICE deck for cell test_latch{sch} from library hw6
+*** Created on Sat Apr 12, 2025 14:02:10
+*** Last revised on Sat Apr 12, 2025 21:51:05
+*** Written on Sat Apr 12, 2025 21:51:12 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+* Model cards are described in this file:
+.include C:/Users/garre/ese_3700/22nm_HP.pm
+
+*** SUBCIRCUIT hw6__nand2 FROM CELL nand2{sch}
+.SUBCKT hw6__nand2 A B OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT A net@1 gnd N L=0.022U W=0.022U
+Mnmos@1 net@1 B gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd A OUT vdd P L=0.022U W=0.022U
+Mpmos@1 vdd B OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__nand2
+
+*** SUBCIRCUIT hw6__not FROM CELL not{sch}
+.SUBCKT hw6__not IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT IN gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd IN OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__not
+
+*** SUBCIRCUIT hw6__latch FROM CELL latch{sch}
+.SUBCKT hw6__latch CLK IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Xnand2@0 IN CLK net@7 hw6__nand2
+Xnand2@1 net@0 OUT net@5 hw6__nand2
+Xnand2@2 net@7 net@5 OUT hw6__nand2
+Xnot@0 CLK net@0 hw6__not
+.ENDS hw6__latch
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: test_latch{sch}
+VCLK CLK gnd pulse (0 0.8V 0ns 1ps 1ps 100ps 200ps) DC 0V AC 0V 0
+VVPWL@0 IN gnd pwl (0 0 187ps 0 188ps 0.8 ) DC 0V AC 0V 0
+VV_Generi@0 vdd gnd DC 0.8 AC 0
+Xlatch@0 CLK IN X hw6__latch
+Xlatch@1 CLK X OUT hw6__latch
+.END

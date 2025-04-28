@@ -1,0 +1,54 @@
+*** SPICE deck for cell test_clk_gen{sch} from library hw6
+*** Created on Wed Apr 09, 2025 19:13:16
+*** Last revised on Sat Apr 12, 2025 12:27:23
+*** Written on Sat Apr 12, 2025 12:27:34 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+* Model cards are described in this file:
+.include C:/Users/garre/ese_3700/22nm_HP.pm
+
+*** SUBCIRCUIT hw6__buffer FROM CELL buffer{sch}
+.SUBCKT hw6__buffer IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@1 net@26 IN gnd gnd N L=0.022U W=0.022U
+Mnmos@2 OUT net@26 gnd gnd N L=0.022U W=0.022U
+Mpmos@1 vdd IN net@26 vdd P L=0.022U W=0.022U
+Mpmos@2 vdd net@26 OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__buffer
+
+*** SUBCIRCUIT hw6__nor2 FROM CELL nor2{sch}
+.SUBCKT hw6__nor2 A B OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT A gnd gnd N L=0.022U W=0.022U
+Mnmos@1 OUT B gnd gnd N L=0.022U W=0.022U
+Mpmos@0 net@2 B OUT vdd P L=0.022U W=0.022U
+Mpmos@1 vdd A net@2 vdd P L=0.022U W=0.022U
+.ENDS hw6__nor2
+
+*** SUBCIRCUIT hw6__not FROM CELL not{sch}
+.SUBCKT hw6__not IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT IN gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd IN OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__not
+
+*** SUBCIRCUIT hw6__two_phase_clock_generator FROM CELL two_phase_clock_generator{sch}
+.SUBCKT hw6__two_phase_clock_generator _CLK CLK IN
+** GLOBAL gnd
+** GLOBAL vdd
+Xbuffer@0 IN b hw6__buffer
+Xnor2@0 a _CLK CLK hw6__nor2
+Xnor2@1 CLK b _CLK hw6__nor2
+Xnot@0 IN a hw6__not
+.ENDS hw6__two_phase_clock_generator
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: test_clk_gen{sch}
+VVPulse@0 IN gnd pulse (0 0.8V 0ns 1ps 1ps 5ns 10ns) DC 0V AC 0V 0
+VV_Generi@0 vdd gnd DC 0.8 AC 0
+Xtwo_phas@0 _CLK CLK IN hw6__two_phase_clock_generator
+.END
