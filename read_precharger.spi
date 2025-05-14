@@ -1,0 +1,16 @@
+*** SPICE deck for cell read_precharger{sch} from library ese_3700_project_2
+*** Created on Fri May 02, 2025 12:58:14
+*** Last revised on Fri May 02, 2025 21:13:58
+*** Written on Fri May 02, 2025 21:14:11 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+* Model cards are described in this file:
+.include C:/Users/garre/ese_3700/22nm_HP.pm
+
+.global vdd
+
+*** TOP LEVEL CELL: read_precharger{sch}
+Mpmos@0 vdd _Pre BL vdd P L=0.022U W=0.176U
+Mpmos@1 vdd _Pre _BL vdd P L=0.022U W=0.176U
+Mpmos@2 BL _Pre _BL vdd P L=0.022U W=0.176U
+.END

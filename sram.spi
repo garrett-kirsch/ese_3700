@@ -1,0 +1,334 @@
+*** SPICE deck for cell sram{sch} from library ese_3700_project_2
+*** Created on Fri May 02, 2025 11:33:02
+*** Last revised on Fri May 02, 2025 21:11:15
+*** Written on Fri May 02, 2025 21:11:25 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+* Model cards are described in this file:
+.include C:/Users/garre/ese_3700/22nm_HP.pm
+
+*** SUBCIRCUIT ese_3700_project_2__nand2 FROM CELL nand2{sch}
+.SUBCKT ese_3700_project_2__nand2 A B OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT A net@1 gnd N L=0.022U W=0.022U
+Mnmos@1 net@1 B gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd A OUT vdd P L=0.022U W=0.022U
+Mpmos@1 vdd B OUT vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__nand2
+
+*** SUBCIRCUIT ese_3700_project_2__not FROM CELL not{sch}
+.SUBCKT ese_3700_project_2__not IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT IN gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd IN OUT vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__not
+
+*** SUBCIRCUIT ese_3700_project_2__latch FROM CELL latch{sch}
+.SUBCKT ese_3700_project_2__latch CLK IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Xnand2@3 IN CLK net@29 ese_3700_project_2__nand2
+Xnand2@4 net@26 OUT net@27 ese_3700_project_2__nand2
+Xnand2@5 net@29 net@27 OUT ese_3700_project_2__nand2
+Xnot@1 CLK net@26 ese_3700_project_2__not
+.ENDS ese_3700_project_2__latch
+
+*** SUBCIRCUIT ese_3700_project_2__register FROM CELL register{sch}
+.SUBCKT ese_3700_project_2__register _CLK CLK IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Xlatch@2 _CLK IN net@19 ese_3700_project_2__latch
+Xlatch@3 CLK net@19 OUT ese_3700_project_2__latch
+.ENDS ese_3700_project_2__register
+
+*** SUBCIRCUIT ese_3700_project_2__4b_bus FROM CELL 4b_bus{sch}
+.SUBCKT ese_3700_project_2__4b_bus _CLK A0 A0_out A1 A1_out A2 A2_out A3 A3_out CLK
+** GLOBAL gnd
+** GLOBAL vdd
+Xregister@0 _CLK CLK A3 A3_out ese_3700_project_2__register
+Xregister@1 _CLK CLK A2 A2_out ese_3700_project_2__register
+Xregister@2 _CLK CLK A1 A1_out ese_3700_project_2__register
+Xregister@3 _CLK CLK A0 A0_out ese_3700_project_2__register
+.ENDS ese_3700_project_2__4b_bus
+
+*** SUBCIRCUIT ese_3700_project_2__SRAM_CELL FROM CELL SRAM_CELL{sch}
+.SUBCKT ese_3700_project_2__SRAM_CELL /BL BL WL
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@0 WL BL gnd N L=0.022U W=0.022U
+Mnmos@1 /BL WL net@3 gnd N L=0.022U W=0.022U
+Xnot@0 net@0 net@3 ese_3700_project_2__not
+Xnot@1 net@3 net@0 ese_3700_project_2__not
+.ENDS ese_3700_project_2__SRAM_CELL
+
+*** SUBCIRCUIT ese_3700_project_2__and-min FROM CELL and-min{sch}
+.SUBCKT ese_3700_project_2__and-min a b out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@3 a net@1 gnd N L=0.022U W=0.022U
+Mnmos@1 net@1 b gnd gnd N L=0.022U W=0.022U
+Mnmos@2 out net@3 gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd b net@3 vdd P L=0.022U W=0.022U
+Mpmos@1 vdd a net@3 vdd P L=0.022U W=0.022U
+Mpmos@2 vdd net@3 out vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__and-min
+
+*** SUBCIRCUIT ese_3700_project_2__nand2-sram FROM CELL nand2-sram{sch}
+.SUBCKT ese_3700_project_2__nand2-sram A B OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT A net@1 gnd N L=0.022U W=0.176U
+Mnmos@1 net@1 B gnd gnd N L=0.022U W=0.176U
+Mpmos@0 vdd A OUT vdd P L=0.022U W=0.176U
+Mpmos@1 vdd B OUT vdd P L=0.022U W=0.176U
+.ENDS ese_3700_project_2__nand2-sram
+
+*** SUBCIRCUIT ese_3700_project_2__read_precharger FROM CELL read_precharger{sch}
+.SUBCKT ese_3700_project_2__read_precharger _BL _Pre BL
+** GLOBAL vdd
+Mpmos@0 vdd _Pre BL vdd P L=0.022U W=0.352U
+Mpmos@1 vdd _Pre _BL vdd P L=0.022U W=0.352U
+Mpmos@2 BL _Pre _BL vdd P L=0.022U W=0.352U
+.ENDS ese_3700_project_2__read_precharger
+
+*** SUBCIRCUIT ese_3700_project_2__and-row-decoder FROM CELL and-row-decoder{sch}
+.SUBCKT ese_3700_project_2__and-row-decoder a b out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@3 a net@1 gnd N L=0.022U W=0.022U
+Mnmos@1 net@1 b gnd gnd N L=0.022U W=0.022U
+Mnmos@2 out net@3 gnd gnd N L=0.022U W=0.088U
+Mpmos@0 vdd b net@3 vdd P L=0.022U W=0.022U
+Mpmos@1 vdd a net@3 vdd P L=0.022U W=0.022U
+Mpmos@2 vdd net@3 out vdd P L=0.022U W=0.088U
+.ENDS ese_3700_project_2__and-row-decoder
+
+*** SUBCIRCUIT ese_3700_project_2__not-row-decoder FROM CELL not-row-decoder{sch}
+.SUBCKT ese_3700_project_2__not-row-decoder in out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 out in gnd gnd N L=0.022U W=0.088U
+Mpmos@0 vdd in out vdd P L=0.022U W=0.088U
+.ENDS ese_3700_project_2__not-row-decoder
+
+*** SUBCIRCUIT ese_3700_project_2__row_decoder FROM CELL row_decoder{sch}
+.SUBCKT ese_3700_project_2__row_decoder a1 a2 a3 row0 row1 row2 row3 row4 row5 row6 row7
+** GLOBAL gnd
+** GLOBAL vdd
+Xand-min@0 a2 a3 net@28 ese_3700_project_2__and-min
+Xand-min@1 net@9 a3 net@33 ese_3700_project_2__and-min
+Xand-min@2 a2 net@23 net@38 ese_3700_project_2__and-min
+Xand-min@3 net@9 net@23 net@43 ese_3700_project_2__and-min
+Xand-row-@0 net@59 net@43 row0 ese_3700_project_2__and-row-decoder
+Xand-row-@1 a1 net@43 row1 ese_3700_project_2__and-row-decoder
+Xand-row-@2 net@59 net@38 row2 ese_3700_project_2__and-row-decoder
+Xand-row-@3 a1 net@38 row3 ese_3700_project_2__and-row-decoder
+Xand-row-@4 net@59 net@33 row4 ese_3700_project_2__and-row-decoder
+Xand-row-@5 a1 net@33 row5 ese_3700_project_2__and-row-decoder
+Xand-row-@6 net@59 net@28 row6 ese_3700_project_2__and-row-decoder
+Xand-row-@7 a1 net@28 row7 ese_3700_project_2__and-row-decoder
+Xnot-row-@1 a3 net@23 ese_3700_project_2__not-row-decoder
+Xnot-row-@2 a2 net@9 ese_3700_project_2__not-row-decoder
+Xnot-row-@3 a1 net@59 ese_3700_project_2__not-row-decoder
+.ENDS ese_3700_project_2__row_decoder
+
+*** SUBCIRCUIT ese_3700_project_2__tristate_buffer FROM CELL tristate_buffer{sch}
+.SUBCKT ese_3700_project_2__tristate_buffer Enable In out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@22 In gnd gnd N L=0.022U W=0.022U
+Mnmos@1 out Enable net@28 gnd N L=0.022U W=0.022U
+Mnmos@2 net@28 net@22 gnd gnd N L=0.022U W=0.022U
+Mnmos@3 net@34 Enable gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd In net@22 vdd P L=0.022U W=0.022U
+Mpmos@1 vdd net@22 net@26 vdd P L=0.022U W=0.022U
+Mpmos@2 net@26 net@34 out vdd P L=0.022U W=0.022U
+Mpmos@3 vdd Enable net@34 vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__tristate_buffer
+
+*** SUBCIRCUIT ese_3700_project_2__tristate_enable_inverter FROM CELL tristate_enable_inverter{sch}
+.SUBCKT ese_3700_project_2__tristate_enable_inverter Enable In out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@22 In gnd gnd N L=0.022U W=0.022U
+Mnmos@1 out net@34 net@28 gnd N L=0.022U W=0.022U
+Mnmos@2 net@28 net@22 gnd gnd N L=0.022U W=0.022U
+Mnmos@3 net@34 Enable gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd In net@22 vdd P L=0.022U W=0.022U
+Mpmos@1 vdd net@22 net@26 vdd P L=0.022U W=0.022U
+Mpmos@2 net@26 Enable out vdd P L=0.022U W=0.022U
+Mpmos@3 vdd Enable net@34 vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__tristate_enable_inverter
+
+*** SUBCIRCUIT ese_3700_project_2__tristate_driver FROM CELL tristate_driver{sch}
+.SUBCKT ese_3700_project_2__tristate_driver _rd/wr BL cs d_in d_out
+** GLOBAL gnd
+** GLOBAL vdd
+Xtristate@1 _rd/wr net@0 BL ese_3700_project_2__tristate_buffer
+Xtristate@3 cs net@3 d_out ese_3700_project_2__tristate_buffer
+Xtristate@4 cs d_in net@0 ese_3700_project_2__tristate_buffer
+Xtristate@6 _rd/wr BL net@3 ese_3700_project_2__tristate_enable_inverter
+.ENDS ese_3700_project_2__tristate_driver
+
+*** SUBCIRCUIT ese_3700_project_2__tristate_inverter FROM CELL tristate_inverter{sch}
+.SUBCKT ese_3700_project_2__tristate_inverter Enable In out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@1 out Enable net@28 gnd N L=0.022U W=0.022U
+Mnmos@2 net@28 In gnd gnd N L=0.022U W=0.022U
+Mnmos@3 net@34 Enable gnd gnd N L=0.022U W=0.022U
+Mpmos@1 vdd In net@26 vdd P L=0.022U W=0.022U
+Mpmos@2 net@26 net@34 out vdd P L=0.022U W=0.022U
+Mpmos@3 vdd Enable net@34 vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__tristate_inverter
+
+*** SUBCIRCUIT ese_3700_project_2__tristate_layer FROM CELL tristate_layer{sch}
+.SUBCKT ese_3700_project_2__tristate_layer _BL0 _BL1 _BL2 _BL3 _BL4 _BL5 _BL6 _BL7 _rd/wr a0 BL0 BL1 BL2 BL3 BL4 BL5 BL6 BL7 d0_in d0_out d1_in d1_out d2_in d2_out d3_in d3_out
+** GLOBAL gnd
+** GLOBAL vdd
+Xnot@1 a0 net@97 ese_3700_project_2__not
+Xtristate@8 _rd/wr BL7 a0 d3_in d3_out ese_3700_project_2__tristate_driver
+Xtristate@9 _rd/wr BL6 a0 d2_in d2_out ese_3700_project_2__tristate_driver
+Xtristate@10 _rd/wr BL5 a0 d1_in d1_out ese_3700_project_2__tristate_driver
+Xtristate@11 _rd/wr BL4 a0 d0_in d0_out ese_3700_project_2__tristate_driver
+Xtristate@12 _rd/wr BL3 net@97 d3_in d3_out ese_3700_project_2__tristate_driver
+Xtristate@13 _rd/wr BL2 net@97 d2_in d2_out ese_3700_project_2__tristate_driver
+Xtristate@14 _rd/wr BL1 net@97 d1_in d1_out ese_3700_project_2__tristate_driver
+Xtristate@15 _rd/wr BL0 net@97 d0_in d0_out ese_3700_project_2__tristate_driver
+Xtristate@16 _rd/wr BL7 _BL7 ese_3700_project_2__tristate_inverter
+Xtristate@17 _rd/wr BL6 _BL6 ese_3700_project_2__tristate_inverter
+Xtristate@18 _rd/wr BL5 _BL5 ese_3700_project_2__tristate_inverter
+Xtristate@19 _rd/wr BL4 _BL4 ese_3700_project_2__tristate_inverter
+Xtristate@20 _rd/wr BL3 _BL3 ese_3700_project_2__tristate_inverter
+Xtristate@21 _rd/wr BL2 _BL2 ese_3700_project_2__tristate_inverter
+Xtristate@22 _rd/wr BL1 _BL1 ese_3700_project_2__tristate_inverter
+Xtristate@23 _rd/wr BL0 _BL0 ese_3700_project_2__tristate_inverter
+.ENDS ese_3700_project_2__tristate_layer
+
+*** SUBCIRCUIT hw6__buffer FROM CELL hw6:buffer{sch}
+.SUBCKT hw6__buffer IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@1 net@26 IN gnd gnd N L=0.022U W=0.022U
+Mnmos@2 OUT net@26 gnd gnd N L=0.022U W=0.022U
+Mpmos@1 vdd IN net@26 vdd P L=0.022U W=0.022U
+Mpmos@2 vdd net@26 OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__buffer
+
+*** SUBCIRCUIT hw6__nor2 FROM CELL hw6:nor2{sch}
+.SUBCKT hw6__nor2 A B OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT A gnd gnd N L=0.022U W=0.022U
+Mnmos@1 OUT B gnd gnd N L=0.022U W=0.022U
+Mpmos@0 net@2 B OUT vdd P L=0.022U W=0.022U
+Mpmos@1 vdd A net@2 vdd P L=0.022U W=0.022U
+.ENDS hw6__nor2
+
+*** SUBCIRCUIT ese_3700_project_2__two_phase_clock_generator FROM CELL two_phase_clock_generator{sch}
+.SUBCKT ese_3700_project_2__two_phase_clock_generator _CLK CLK IN
+** GLOBAL gnd
+** GLOBAL vdd
+Xbuffer@0 IN b hw6__buffer
+Xnor2@0 a _CLK CLK hw6__nor2
+Xnor2@1 CLK b _CLK hw6__nor2
+Xnot@0 IN a ese_3700_project_2__not
+.ENDS ese_3700_project_2__two_phase_clock_generator
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: sram{sch}
+X_4b_bus@0 net@463 a0 net@240 a1 net@231 a2 net@234 a3 net@237 net@461 ese_3700_project_2__4b_bus
+X_4b_bus@1 net@463 net@443 d0_out net@444 d1_out net@446 d2_out net@448 d3_out net@461 ese_3700_project_2__4b_bus
+X_4b_bus@2 net@463 d0_in net@435 d1_in net@436 d2_in net@437 d3_in net@438 net@461 ese_3700_project_2__4b_bus
+XSRAM_CEL@0 net@8 net@0 net@88 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@1 net@24 net@16 net@88 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@2 net@8 net@0 net@80 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@3 net@24 net@16 net@80 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@4 net@8 net@0 net@67 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@5 net@24 net@16 net@67 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@6 net@8 net@0 net@60 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@7 net@24 net@16 net@60 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@8 net@104 net@96 net@88 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@9 net@120 net@112 net@88 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@10 net@104 net@96 net@80 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@11 net@120 net@112 net@80 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@12 net@104 net@96 net@67 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@13 net@120 net@112 net@67 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@14 net@104 net@96 net@60 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@15 net@120 net@112 net@60 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@16 net@136 net@128 net@88 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@17 net@152 net@144 net@88 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@18 net@136 net@128 net@80 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@19 net@152 net@144 net@80 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@20 net@136 net@128 net@67 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@21 net@152 net@144 net@67 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@22 net@136 net@128 net@60 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@23 net@152 net@144 net@60 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@24 net@168 net@160 net@88 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@25 net@184 net@176 net@88 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@26 net@168 net@160 net@80 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@27 net@184 net@176 net@80 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@28 net@168 net@160 net@67 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@29 net@184 net@176 net@67 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@30 net@168 net@160 net@60 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@31 net@184 net@176 net@60 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@32 net@8 net@0 net@53 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@33 net@24 net@16 net@53 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@34 net@8 net@0 net@46 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@35 net@24 net@16 net@46 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@36 net@8 net@0 net@39 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@37 net@24 net@16 net@39 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@38 net@8 net@0 net@32 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@39 net@24 net@16 net@32 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@40 net@104 net@96 net@53 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@41 net@120 net@112 net@53 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@42 net@104 net@96 net@46 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@43 net@120 net@112 net@46 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@44 net@104 net@96 net@39 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@45 net@120 net@112 net@39 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@46 net@104 net@96 net@32 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@47 net@120 net@112 net@32 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@48 net@136 net@128 net@53 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@49 net@152 net@144 net@53 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@50 net@136 net@128 net@46 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@51 net@152 net@144 net@46 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@52 net@136 net@128 net@39 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@53 net@152 net@144 net@39 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@54 net@136 net@128 net@32 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@55 net@152 net@144 net@32 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@56 net@168 net@160 net@53 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@57 net@184 net@176 net@53 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@58 net@168 net@160 net@46 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@59 net@184 net@176 net@46 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@60 net@168 net@160 net@39 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@61 net@184 net@176 net@39 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@62 net@168 net@160 net@32 ese_3700_project_2__SRAM_CELL
+XSRAM_CEL@63 net@184 net@176 net@32 ese_3700_project_2__SRAM_CELL
+Xand-min@0 net@463 net@220 net@88 ese_3700_project_2__and-min
+Xand-min@1 net@463 net@217 net@80 ese_3700_project_2__and-min
+Xand-min@2 net@463 net@214 net@67 ese_3700_project_2__and-min
+Xand-min@3 net@463 net@211 net@60 ese_3700_project_2__and-min
+Xand-min@4 net@463 net@208 net@53 ese_3700_project_2__and-min
+Xand-min@5 net@463 net@205 net@46 ese_3700_project_2__and-min
+Xand-min@6 net@463 net@203 net@39 ese_3700_project_2__and-min
+Xand-min@7 net@463 net@202 net@32 ese_3700_project_2__and-min
+Xnand2-sr@0 a0 net@557 net@549 ese_3700_project_2__nand2-sram
+Xnand2-sr@1 net@586 net@557 net@553 ese_3700_project_2__nand2-sram
+Xnand2@0 net@461 net@535 net@557 ese_3700_project_2__nand2
+Xnot@0 _rd/wr net@535 ese_3700_project_2__not
+Xnot@1 a0 net@586 ese_3700_project_2__not
+Xread_pre@0 net@8 net@549 net@0 ese_3700_project_2__read_precharger
+Xread_pre@1 net@24 net@549 net@16 ese_3700_project_2__read_precharger
+Xread_pre@2 net@104 net@549 net@96 ese_3700_project_2__read_precharger
+Xread_pre@3 net@120 net@549 net@112 ese_3700_project_2__read_precharger
+Xread_pre@4 net@136 net@553 net@128 ese_3700_project_2__read_precharger
+Xread_pre@5 net@152 net@553 net@144 ese_3700_project_2__read_precharger
+Xread_pre@6 net@168 net@553 net@160 ese_3700_project_2__read_precharger
+Xread_pre@7 net@184 net@553 net@176 ese_3700_project_2__read_precharger
+Xrow_deco@0 net@231 net@234 net@237 net@202 net@203 net@205 net@208 net@211 net@214 net@217 net@220 ese_3700_project_2__row_decoder
+Xtristate@16 net@184 net@168 net@152 net@136 net@120 net@104 net@24 net@8 _rd/wr net@240 net@176 net@160 net@144 net@128 net@112 net@96 net@16 net@0 net@435 net@443 net@436 net@444 net@437 net@446 net@438 net@448 ese_3700_project_2__tristate_layer
+Xtwo_phas@0 net@463 net@461 CLK ese_3700_project_2__two_phase_clock_generator
+.END

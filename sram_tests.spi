@@ -1,0 +1,75 @@
+*** SPICE deck for cell sram_tests{sch} from library ese_3700_project_2
+*** Created on Thu May 01, 2025 22:17:19
+*** Last revised on Fri May 02, 2025 11:29:06
+*** Written on Fri May 02, 2025 11:30:05 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+* Model cards are described in this file:
+.include C:/Users/garre/ese_3700/22nm_HP.pm
+
+*** SUBCIRCUIT ese_3700_project_2__not FROM CELL not{sch}
+.SUBCKT ese_3700_project_2__not IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT IN gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd IN OUT vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__not
+
+*** SUBCIRCUIT ese_3700_project_2__SRAM_CELL FROM CELL SRAM_CELL{sch}
+.SUBCKT ese_3700_project_2__SRAM_CELL /BL BL WL
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@0 WL BL gnd N L=0.022U W=0.022U
+Mnmos@1 /BL WL net@3 gnd N L=0.022U W=0.022U
+Xnot@0 net@0 net@3 ese_3700_project_2__not
+Xnot@1 net@3 net@0 ese_3700_project_2__not
+.ENDS ese_3700_project_2__SRAM_CELL
+
+*** SUBCIRCUIT ese_3700_project_2__tristate_buffer FROM CELL tristate_buffer{sch}
+.SUBCKT ese_3700_project_2__tristate_buffer Enable In out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@22 In gnd gnd N L=0.022U W=0.022U
+Mnmos@1 out Enable net@28 gnd N L=0.022U W=0.022U
+Mnmos@2 net@28 net@22 gnd gnd N L=0.022U W=0.022U
+Mnmos@3 net@34 Enable gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd In net@22 vdd P L=0.022U W=0.022U
+Mpmos@1 vdd net@22 net@26 vdd P L=0.022U W=0.022U
+Mpmos@2 net@26 net@34 out vdd P L=0.022U W=0.022U
+Mpmos@3 vdd Enable net@34 vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__tristate_buffer
+
+*** SUBCIRCUIT ese_3700_project_2__tristate_enable_inverter FROM CELL tristate_enable_inverter{sch}
+.SUBCKT ese_3700_project_2__tristate_enable_inverter Enable In out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@22 In gnd gnd N L=0.022U W=0.022U
+Mnmos@1 out net@34 net@28 gnd N L=0.022U W=0.022U
+Mnmos@2 net@28 net@22 gnd gnd N L=0.022U W=0.022U
+Mnmos@3 net@34 Enable gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd In net@22 vdd P L=0.022U W=0.022U
+Mpmos@1 vdd net@22 net@26 vdd P L=0.022U W=0.022U
+Mpmos@2 net@26 Enable out vdd P L=0.022U W=0.022U
+Mpmos@3 vdd Enable net@34 vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__tristate_enable_inverter
+
+*** SUBCIRCUIT ese_3700_project_2__tristate_driver FROM CELL tristate_driver{sch}
+.SUBCKT ese_3700_project_2__tristate_driver _rd/wr BL cs d_in d_out
+** GLOBAL gnd
+** GLOBAL vdd
+Xtristate@1 _rd/wr net@0 BL ese_3700_project_2__tristate_buffer
+Xtristate@3 cs net@3 d_out ese_3700_project_2__tristate_buffer
+Xtristate@4 cs d_in net@0 ese_3700_project_2__tristate_buffer
+Xtristate@6 _rd/wr BL net@3 ese_3700_project_2__tristate_enable_inverter
+.ENDS ese_3700_project_2__tristate_driver
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: sram_tests{sch}
+XSRAM_CEL@0 net@14 BL gnd ese_3700_project_2__SRAM_CELL
+VVPWL@0 d_in gnd pwl (0 0 500ps 0 501ps 0.8 1000ps 0.8 1001ps 0) DC 0V AC 0V 0
+VVPWL@1 net@4 gnd pwl (0 0 400ps 0 401ps 0.8 800ps 0.8 801ps 0) DC 0V AC 0V 0
+VV_Generi@0 vdd gnd DC 0.8 AC 0
+Xtristate@0 net@4 BL vdd d_in d_out ese_3700_project_2__tristate_driver
+Xtristate@1 net@4 net@14 vdd tristate@1_d_in tristate@1_d_out ese_3700_project_2__tristate_driver
+.END

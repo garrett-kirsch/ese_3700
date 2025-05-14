@@ -1,0 +1,176 @@
+*** SPICE deck for cell test_row_decoder{sch} from library ese_3700_project_2
+*** Created on Thu May 01, 2025 14:13:53
+*** Last revised on Thu May 01, 2025 19:39:26
+*** Written on Thu May 01, 2025 19:39:36 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+* Model cards are described in this file:
+.include C:/Users/garre/ese_3700/22nm_HP.pm
+
+*** SUBCIRCUIT hw6__nand2 FROM CELL hw6:nand2{sch}
+.SUBCKT hw6__nand2 A B OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT A net@1 gnd N L=0.022U W=0.022U
+Mnmos@1 net@1 B gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd A OUT vdd P L=0.022U W=0.022U
+Mpmos@1 vdd B OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__nand2
+
+*** SUBCIRCUIT hw6__not FROM CELL hw6:not{sch}
+.SUBCKT hw6__not IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT IN gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd IN OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__not
+
+*** SUBCIRCUIT hw6__latch FROM CELL hw6:latch{sch}
+.SUBCKT hw6__latch CLK IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Xnand2@0 IN CLK net@7 hw6__nand2
+Xnand2@1 net@0 OUT net@5 hw6__nand2
+Xnand2@2 net@7 net@5 OUT hw6__nand2
+Xnot@0 CLK net@0 hw6__not
+.ENDS hw6__latch
+
+*** SUBCIRCUIT ese_3700_project_2__register FROM CELL register{sch}
+.SUBCKT ese_3700_project_2__register _CLK CLK IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Xlatch@0 _CLK IN net@0 hw6__latch
+Xlatch@1 CLK net@0 OUT hw6__latch
+.ENDS ese_3700_project_2__register
+
+*** SUBCIRCUIT ese_3700_project_2__4b_bus FROM CELL 4b_bus{sch}
+.SUBCKT ese_3700_project_2__4b_bus _CLK A0 A0_out A1 A1_out A2 A2_out A3 A3_out CLK
+** GLOBAL gnd
+** GLOBAL vdd
+Xregister@0 _CLK CLK A3 A3_out ese_3700_project_2__register
+Xregister@1 _CLK CLK A2 A2_out ese_3700_project_2__register
+Xregister@2 _CLK CLK A1 A1_out ese_3700_project_2__register
+Xregister@3 _CLK CLK A0 A0_out ese_3700_project_2__register
+.ENDS ese_3700_project_2__4b_bus
+
+*** SUBCIRCUIT ese_3700_project_2__buffer FROM CELL buffer{sch}
+.SUBCKT ese_3700_project_2__buffer IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@1 net@26 IN gnd gnd N L=0.022U W=0.022U
+Mnmos@2 OUT net@26 gnd gnd N L=0.022U W=0.022U
+Mpmos@1 vdd IN net@26 vdd P L=0.022U W=0.022U
+Mpmos@2 vdd net@26 OUT vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__buffer
+
+*** SUBCIRCUIT ese_3700_project_2__and-min FROM CELL and-min{sch}
+.SUBCKT ese_3700_project_2__and-min a b out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@3 a net@1 gnd N L=0.022U W=0.022U
+Mnmos@1 net@1 b gnd gnd N L=0.022U W=0.022U
+Mnmos@2 out net@3 gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd b net@3 vdd P L=0.022U W=0.022U
+Mpmos@1 vdd a net@3 vdd P L=0.022U W=0.022U
+Mpmos@2 vdd net@3 out vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__and-min
+
+*** SUBCIRCUIT ese_3700_project_2__and-row-decoder FROM CELL and-row-decoder{sch}
+.SUBCKT ese_3700_project_2__and-row-decoder a b out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@3 a net@1 gnd N L=0.022U W=0.022U
+Mnmos@1 net@1 b gnd gnd N L=0.022U W=0.022U
+Mnmos@2 out net@3 gnd gnd N L=0.022U W=0.088U
+Mpmos@0 vdd b net@3 vdd P L=0.022U W=0.022U
+Mpmos@1 vdd a net@3 vdd P L=0.022U W=0.022U
+Mpmos@2 vdd net@3 out vdd P L=0.022U W=0.088U
+.ENDS ese_3700_project_2__and-row-decoder
+
+*** SUBCIRCUIT ese_3700_project_2__not-row-decoder FROM CELL not-row-decoder{sch}
+.SUBCKT ese_3700_project_2__not-row-decoder in out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 out in gnd gnd N L=0.022U W=0.088U
+Mpmos@0 vdd in out vdd P L=0.022U W=0.088U
+.ENDS ese_3700_project_2__not-row-decoder
+
+*** SUBCIRCUIT ese_3700_project_2__row_decoder FROM CELL row_decoder{sch}
+.SUBCKT ese_3700_project_2__row_decoder a1 a2 a3 row0 row1 row2 row3 row4 row5 row6 row7
+** GLOBAL gnd
+** GLOBAL vdd
+Xand-min@0 a2 a3 net@28 ese_3700_project_2__and-min
+Xand-min@1 net@9 a3 net@33 ese_3700_project_2__and-min
+Xand-min@2 a2 net@23 net@38 ese_3700_project_2__and-min
+Xand-min@3 net@9 net@23 net@43 ese_3700_project_2__and-min
+Xand-row-@0 net@59 net@43 row0 ese_3700_project_2__and-row-decoder
+Xand-row-@1 a1 net@43 row1 ese_3700_project_2__and-row-decoder
+Xand-row-@2 net@59 net@38 row2 ese_3700_project_2__and-row-decoder
+Xand-row-@3 a1 net@38 row3 ese_3700_project_2__and-row-decoder
+Xand-row-@4 net@59 net@33 row4 ese_3700_project_2__and-row-decoder
+Xand-row-@5 a1 net@33 row5 ese_3700_project_2__and-row-decoder
+Xand-row-@6 net@59 net@28 row6 ese_3700_project_2__and-row-decoder
+Xand-row-@7 a1 net@28 row7 ese_3700_project_2__and-row-decoder
+Xnot-row-@1 a3 net@23 ese_3700_project_2__not-row-decoder
+Xnot-row-@2 a2 net@9 ese_3700_project_2__not-row-decoder
+Xnot-row-@3 a1 net@59 ese_3700_project_2__not-row-decoder
+.ENDS ese_3700_project_2__row_decoder
+
+*** SUBCIRCUIT hw6__buffer FROM CELL hw6:buffer{sch}
+.SUBCKT hw6__buffer IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@1 net@26 IN gnd gnd N L=0.022U W=0.022U
+Mnmos@2 OUT net@26 gnd gnd N L=0.022U W=0.022U
+Mpmos@1 vdd IN net@26 vdd P L=0.022U W=0.022U
+Mpmos@2 vdd net@26 OUT vdd P L=0.022U W=0.022U
+.ENDS hw6__buffer
+
+*** SUBCIRCUIT hw6__nor2 FROM CELL hw6:nor2{sch}
+.SUBCKT hw6__nor2 A B OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT A gnd gnd N L=0.022U W=0.022U
+Mnmos@1 OUT B gnd gnd N L=0.022U W=0.022U
+Mpmos@0 net@2 B OUT vdd P L=0.022U W=0.022U
+Mpmos@1 vdd A net@2 vdd P L=0.022U W=0.022U
+.ENDS hw6__nor2
+
+*** SUBCIRCUIT ese_3700_project_2__not FROM CELL not{sch}
+.SUBCKT ese_3700_project_2__not IN OUT
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 OUT IN gnd gnd N L=0.022U W=0.022U
+Mpmos@0 vdd IN OUT vdd P L=0.022U W=0.022U
+.ENDS ese_3700_project_2__not
+
+*** SUBCIRCUIT ese_3700_project_2__two_phase_clock_generator FROM CELL two_phase_clock_generator{sch}
+.SUBCKT ese_3700_project_2__two_phase_clock_generator _CLK CLK IN
+** GLOBAL gnd
+** GLOBAL vdd
+Xbuffer@0 IN b hw6__buffer
+Xnor2@0 a _CLK CLK hw6__nor2
+Xnor2@1 CLK b _CLK hw6__nor2
+Xnot@0 IN a ese_3700_project_2__not
+.ENDS ese_3700_project_2__two_phase_clock_generator
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: test_row_decoder{sch}
+X_4b_bus@0 _CLK _4b_bus@0_A0 _4b_bus@0_A0_out net@106 a1 net@111 a2 net@113 a3 CLK ese_3700_project_2__4b_bus
+VVPWL@0 net@111 gnd pwl (0 0 5ns 0 5001ps 0.8 8ns 0.8 8001ps 0 12ns 0 12001ps 0.8 ) DC 0V AC 0V 0
+VVPWL@1 net@113 gnd pwl (0 0 9ns 0 9001ps 0.8) DC 0V AC 0V 0
+VVPulse@0 net@21 gnd pulse (0V 0.8V 1ns 1ps 1ps 1ns 2ns) DC 0V AC 0V 0
+VVPulse@1 net@106 gnd pulse (0.8V\ 0V 0ns 1ps 1ps 2ns 4ns) DC 0V AC 0V 0
+VV_Generi@0 vdd gnd DC 0.8 AC 0
+Xbuffer@0 net@166 row0 ese_3700_project_2__buffer
+Xbuffer@1 net@167 row1 ese_3700_project_2__buffer
+Xbuffer@2 net@168 row2 ese_3700_project_2__buffer
+Xbuffer@3 net@169 row3 ese_3700_project_2__buffer
+Xbuffer@4 net@170 row4 ese_3700_project_2__buffer
+Xbuffer@5 net@171 row5 ese_3700_project_2__buffer
+Xbuffer@6 net@172 row6 ese_3700_project_2__buffer
+Xbuffer@7 net@156 row7 ese_3700_project_2__buffer
+Xrow_deco@1 a1 a2 a3 net@166 net@167 net@168 net@169 net@170 net@171 net@172 net@156 ese_3700_project_2__row_decoder
+Xtwo_phas@0 _CLK CLK net@21 ese_3700_project_2__two_phase_clock_generator
+.END
